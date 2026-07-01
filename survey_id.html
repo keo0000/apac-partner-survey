@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netflix Creative Partner Survey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --black:#141414;--offblack:#1c1c1c;--charcoal:#2a2a2a;--subtle:#888;--border:#333;--white:#f5f5f1;--cream:#e8e4dc;--red:#e50914;--accent:#c8b89a;--radius:4px; }
+  html { scroll-behavior: smooth; }
+  body { background:var(--black);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;font-size:15px;line-height:1.7;min-height:100vh; }
+  header { border-bottom:1px solid var(--border);padding:28px 40px;display:flex;align-items:center;gap:16px; }
+  .logo-mark { width:6px;height:36px;background:var(--red);border-radius:1px;flex-shrink:0; }
+  .logo-text { font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.12em;color:var(--white);opacity:0.9; }
+  .hero { padding:56px 40px 48px;max-width:720px;border-bottom:1px solid var(--border); }
+  .hero-eyebrow { font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:24px; }
+  .salutation { font-size:16px;font-weight:500;color:var(--white);margin-bottom:20px; }
+  .hero-body { font-size:15px;color:var(--cream);max-width:620px;line-height:1.85; }
+  .hero-body p+p { margin-top:16px; }
+  .hero-signoff { margin-top:24px;font-size:15px;color:var(--cream);line-height:1.7; }
+  .deadline-pill { display:inline-flex;align-items:center;gap:8px;background:var(--charcoal);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;letter-spacing:0.05em;color:var(--accent);margin-top:28px; }
+  .deadline-pill::before { content:'';width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0; }
+  .form-wrap { max-width:720px;padding:56px 40px 80px; }
+  .question-block { padding:36px 0;border-bottom:1px solid var(--border); }
+  .question-block:last-of-type { border-bottom:none; }
+  .q-number { font-size:11px;font-weight:600;letter-spacing:0.15em;color:var(--red);text-transform:uppercase;margin-bottom:10px; }
+  .q-text { font-size:16px;font-weight:400;color:var(--white);margin-bottom:6px;line-height:1.5; }
+  .q-hint { font-size:12px;color:var(--subtle);margin-bottom:22px;font-style:italic; }
+  .text-input { width:100%;background:var(--offblack);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;color:var(--white);font-family:'Inter',sans-serif;font-size:14px;font-weight:300;transition:border-color 0.2s;outline:none; }
+  .text-input:focus { border-color:var(--accent); }
+  .options { display:flex;flex-direction:column;gap:10px; }
+  .option-label { display:flex;align-items:flex-start;gap:14px;cursor:pointer;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--offblack);transition:border-color 0.15s,background 0.15s;user-select:none; }
+  .option-label:hover { border-color:var(--accent);background:var(--charcoal); }
+  .option-label input { display:none; }
+  .custom-indicator { width:18px;height:18px;border:1.5px solid var(--border);flex-shrink:0;margin-top:1px;transition:border-color 0.15s,background 0.15s;position:relative; }
+  .option-label input[type="radio"]~.custom-indicator { border-radius:50%; }
+  .option-label input[type="checkbox"]~.custom-indicator { border-radius:2px; }
+  .option-label input:checked~.custom-indicator { background:var(--red);border-color:var(--red); }
+  .option-label input[type="radio"]:checked~.custom-indicator::after { content:'';background:white;border-radius:50%;position:absolute;inset:4px; }
+  .option-label input[type="checkbox"]:checked~.custom-indicator::after { content:'✓';color:white;font-size:11px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%); }
+  .option-label:has(input:checked) { border-color:var(--red);background:#1f1010; }
+  .option-text { font-size:14px;color:var(--cream);line-height:1.5;padding-top:1px; }
+  .rating-grid { display:flex;flex-direction:column;gap:12px; }
+  .rating-row { display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid #222; }
+  .rating-row:last-child { border-bottom:none; }
+  .rating-label { font-size:13px;color:var(--cream); }
+  .rating-scale { display:flex;gap:6px;align-items:center;flex-shrink:0; }
+  .rating-btn { width:36px;height:36px;border:1px solid var(--border);background:var(--offblack);color:var(--subtle);border-radius:var(--radius);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;transition:all 0.15s;display:flex;align-items:center;justify-content:center; }
+  .rating-btn:hover { border-color:var(--accent);color:var(--white); }
+  .rating-btn.selected { background:var(--red);border-color:var(--red);color:white; }
+  .rating-btn.idk-btn { width:auto;padding:0 10px;font-size:11px;letter-spacing:0.05em;margin-left:4px;border-color:#333;color:var(--subtle); }
+  .rating-btn.idk-btn:hover { border-color:var(--accent);color:var(--white); }
+  .rating-btn.idk-btn.selected { background:var(--charcoal);border-color:var(--accent);color:var(--accent); }
+  textarea.text-input { min-height:120px;resize:vertical; }
+  .submit-section { padding-top:48px;display:flex;flex-direction:column;gap:16px; }
+  .submit-btn { display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--red);color:white;border:none;border-radius:var(--radius);padding:14px 36px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:background 0.2s,transform 0.1s;align-self:flex-start; }
+  .submit-btn:hover { background:#c0070f; }
+  .submit-btn:active { transform:scale(0.98); }
+  .submit-note { font-size:12px;color:var(--subtle);font-style:italic; }
+  .success-screen { display:none;padding:72px 40px;max-width:560px; }
+  .success-screen.visible { display:block; }
+  .success-icon { width:48px;height:48px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:28px; }
+  .success-screen h2 { font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.04em;margin-bottom:12px; }
+  .success-screen p { color:var(--cream);font-size:14px; }
+  footer { border-top:1px solid var(--border);padding:24px 40px;font-size:11px;color:var(--subtle);letter-spacing:0.05em; }
+  .toast { position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:13px;color:var(--cream);transition:transform 0.3s ease;z-index:100;white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  @media(max-width:600px){header,.hero,.form-wrap{padding-left:20px;padding-right:20px;}.rating-row{grid-template-columns:1fr;gap:8px;}.rating-scale{flex-wrap:wrap;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-mark"></div>
+  <span class="logo-text">Netflix Content Team</span>
+</header>
+<div class="hero">
+  <div class="hero-eyebrow">Creative Partner Survey · Indonesia</div>
+  <div class="salutation">Dear Partner,</div>
+  <div class="hero-body"><p>Terima kasih telah membagikan karya Anda kepada dunia, dan atas kerja sama Anda dengan Netflix.</p>
+<p>Di Netflix, kami terus berupaya meningkatkan cara kami mendukung Anda dalam menghadirkan cerita-cerita yang luar biasa.</p>
+<p>Sebagai seseorang yang berada di pusat perjalanan kreatif tersebut, perspektif Anda sangat berarti bagi kami. Kami mengundang Anda untuk meluangkan sekitar 5 menit untuk mengisi survei singkat ini mengenai pengalaman Anda bekerja sama dengan kami sebagai Partner Kreatif. Masukan yang jujur akan membantu kami memahami apa yang sudah berjalan dengan baik dan apa yang masih dapat kami tingkatkan.</p>
+<p>Survei ini sepenuhnya anonim dan hanya akan digunakan untuk keperluan internal Netflix. Kami mendorong Anda untuk memberikan masukan secara terbuka, dan ingin meyakinkan bahwa seluruh respons akan digunakan semata-mata untuk memperkuat kolaborasi kami dengan para kreator seperti Anda.</p></div>
+  <div class="hero-signoff">Terima kasih sebelumnya atas waktu dan masukan yang Anda berikan. Kami sangat menghargai pendapat Anda.<br><br>Salam hangat,<br><strong>Tim Content Netflix</strong></div>
+  <div class="deadline-pill">Mohon mengisi survei ini paling lambat 9 Juli</div>
+</div>
+<div class="form-wrap" id="form-wrap">
+<form id="survey-form" novalidate>
+  <div class="question-block">
+    <div class="q-number">Q 01</div>
+    <div class="q-text">Anda berasal dari negara/pasar apa? <span style="color:var(--red)">*</span></div>
+    <input class="text-input" type="text" name="q1_country" required>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 02</div>
+    <div class="q-text">Apa profesi Anda?</div>
+    <div class="options">
+      <label class="option-label"><input type="checkbox" name="q2_occupation" value="Writer"><span class="custom-indicator"></span><span class="option-text">Penulis</span></label>
+      <label class="option-label"><input type="checkbox" name="q2_occupation" value="Director"><span class="custom-indicator"></span><span class="option-text">Sutradara</span></label>
+      <label class="option-label"><input type="checkbox" name="q2_occupation" value="Producer"><span class="custom-indicator"></span><span class="option-text">Produser</span></label></div>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 03</div>
+    <div class="q-text">Format apa yang Anda kerjakan? (Dapat memilih lebih dari satu)</div>
+    <div class="options">
+      <label class="option-label"><input type="checkbox" name="q3_format" value="Series"><span class="custom-indicator"></span><span class="option-text">Serial</span></label>
+      <label class="option-label"><input type="checkbox" name="q3_format" value="Film"><span class="custom-indicator"></span><span class="option-text">Film</span></label>
+      <label class="option-label"><input type="checkbox" name="q3_format" value="Nonfiction"><span class="custom-indicator"></span><span class="option-text">Nonfiksi</span></label></div>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 04</div>
+    <div class="q-text">Pilih 3 kemampuan terpenting (dan hanya 3) yang menurut Anda harus dimiliki oleh seorang Partner Kreatif.</div>
+    <div class="q-hint">Pilih tepat 3.</div>
+    <div class="options" id="q4-options">
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Selera dan intuisi kreatif yang kuat"><span class="custom-indicator"></span><span class="option-text">Selera dan intuisi kreatif yang kuat</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Keahlian dalam struktur dan arsitektur cerita"><span class="custom-indicator"></span><span class="option-text">Keahlian dalam struktur dan arsitektur cerita</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Kemampuan melakukan brainstorming ide-ide baru"><span class="custom-indicator"></span><span class="option-text">Kemampuan melakukan brainstorming ide-ide baru</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Kemampuan memberikan masukan yang berkualitas untuk naskah maupun hasil editing"><span class="custom-indicator"></span><span class="option-text">Kemampuan memberikan masukan yang berkualitas untuk naskah maupun hasil editing</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Kemampuan membantu di luar aspek cerita, seperti Produksi, Casting, dan lainnya"><span class="custom-indicator"></span><span class="option-text">Kemampuan membantu di luar aspek cerita, seperti Produksi, Casting, dan lainnya</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Percaya diri dalam mengambil keputusan"><span class="custom-indicator"></span><span class="option-text">Percaya diri dalam mengambil keputusan</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Kemampuan menghadapi percakapan yang sulit"><span class="custom-indicator"></span><span class="option-text">Kemampuan menghadapi percakapan yang sulit</span></label>
+      <label class="option-label"><input type="checkbox" name="q4_skills" value="Kemampuan memberikan dukungan, keramahan, dan motivasi"><span class="custom-indicator"></span><span class="option-text">Kemampuan memberikan dukungan, keramahan, dan motivasi</span></label></div>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 05</div>
+    <div class="q-text">Pada skala 1 hingga 5, dengan 5 sebagai nilai tertinggi, bagaimana Anda menilai kemampuan Partner Kreatif Anda di Netflix dalam aspek-aspek berikut?</div>
+    <div class="q-hint">Silakan pilih "IDK (Saya tidak tahu)" apabila Anda belum pernah bekerja sama dengan Partner Kreatif Anda dalam kapasitas tersebut.</div>
+    <div class="rating-grid">
+      <div class="rating-row">
+        <span class="rating-label">Selera dan intuisi kreatif yang kuat</span>
+        <div class="rating-scale" data-name="q5_0">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Keahlian dalam struktur dan arsitektur cerita</span>
+        <div class="rating-scale" data-name="q5_1">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Kemampuan melakukan brainstorming ide-ide baru</span>
+        <div class="rating-scale" data-name="q5_2">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Kemampuan memberikan masukan yang berkualitas untuk naskah maupun hasil editing</span>
+        <div class="rating-scale" data-name="q5_3">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Kemampuan membantu di luar aspek cerita, seperti Produksi, Casting, dan lainnya</span>
+        <div class="rating-scale" data-name="q5_4">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Percaya diri dalam mengambil keputusan</span>
+        <div class="rating-scale" data-name="q5_5">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Kemampuan menghadapi percakapan yang sulit</span>
+        <div class="rating-scale" data-name="q5_6">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div>
+      <div class="rating-row">
+        <span class="rating-label">Kemampuan memberikan dukungan, keramahan, dan motivasi</span>
+        <div class="rating-scale" data-name="q5_7">
+          <button type="button" class="rating-btn" data-val="1">1</button>
+          <button type="button" class="rating-btn" data-val="2">2</button>
+          <button type="button" class="rating-btn" data-val="3">3</button>
+          <button type="button" class="rating-btn" data-val="4">4</button>
+          <button type="button" class="rating-btn" data-val="5">5</button>
+          <button type="button" class="rating-btn idk-btn" data-val="IDK">IDK</button>
+        </div>
+      </div></div>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 06</div>
+    <div class="q-text">Lengkapi pernyataan berikut: Pengalaman saya bekerja dengan Tim Content terasa/terasa seperti…</div>
+    <div class="options">
+      <label class="option-label"><input type="radio" name="q6_feel" value="1"><span class="custom-indicator"></span><span class="option-text">Sangat korporat</span></label>
+      <label class="option-label"><input type="radio" name="q6_feel" value="2"><span class="custom-indicator"></span><span class="option-text">Korporat</span></label>
+      <label class="option-label"><input type="radio" name="q6_feel" value="3"><span class="custom-indicator"></span><span class="option-text">Seimbang antara korporat dan kreatif</span></label>
+      <label class="option-label"><input type="radio" name="q6_feel" value="4"><span class="custom-indicator"></span><span class="option-text">Kreatif</span></label>
+      <label class="option-label"><input type="radio" name="q6_feel" value="5"><span class="custom-indicator"></span><span class="option-text">Sangat kreatif</span></label></div>
+  </div>
+  <div class="question-block">
+    <div class="q-number">Q 07</div>
+    <div class="q-text">Jika ada satu saran yang ingin diberikan kepada Creative Executive untuk semakin memperkuat kemitraan dan kolaborasi Anda, apakah saran tersebut?</div>
+    <div class="q-hint"></div>
+    <textarea class="text-input" name="q7_suggestion"></textarea>
+  </div>
+  <div class="submit-section">
+    <button type="submit" class="submit-btn">Kirim Jawaban →</button>
+    <p class="submit-note">Jawaban Anda bersifat anonim dan hanya digunakan untuk meningkatkan kolaborasi kami.</p>
+  </div>
+</form>
+</div>
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✓</div>
+  <h2>Terima kasih.</h2>
+  <p>Masukan Anda telah diterima. Kami sangat menghargai pendapat Anda.</p>
+  <br>
+  <p style="color:var(--subtle);font-size:12px;">— Tim Content Netflix</p>
+</div>
+<footer>Netflix, Inc. · Creative Partner Survey · Indonesia · 2025</footer>
+<div class="toast" id="toast"></div>
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMWKhg375vskc8zJCAtrFCcSqoK9ZPrucCZlB5ydIWDBywd7jcpmiO37qM51-Vo0QA/exec';
+  const MARKET = 'id';
+  document.querySelectorAll('.rating-scale').forEach(scale => {
+    scale.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        scale.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  });
+  const q4 = document.getElementById('q4-options');
+  q4.addEventListener('change', () => {
+    const checked = q4.querySelectorAll('input:checked');
+    if (checked.length >= 3) { q4.querySelectorAll('input:not(:checked)').forEach(cb => cb.disabled = true); }
+    else { q4.querySelectorAll('input').forEach(cb => cb.disabled = false); }
+  });
+  function showToast(msg) { const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000); }
+  document.getElementById('survey-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const q1 = document.querySelector('[name="q1_country"]').value.trim();
+    if (!q1) { showToast('Please enter your country / market.'); return; }
+    const data = { timestamp: new Date().toISOString(), market: MARKET };
+    data.q1_country = q1;
+    data.q2_occupation = [...document.querySelectorAll('[name="q2_occupation"]:checked')].map(c=>c.value).join(', ');
+    data.q3_format = [...document.querySelectorAll('[name="q3_format"]:checked')].map(c=>c.value).join(', ');
+    const q4checked = [...document.querySelectorAll('[name="q4_skills"]')];
+    q4checked.forEach((cb, i) => { data['q4_' + i] = cb.checked ? '✓' : ''; });
+    document.querySelectorAll('.rating-scale').forEach(scale => { data[scale.dataset.name] = scale.querySelector('.rating-btn.selected')?.dataset.val || ''; });
+    data.q6_feel = document.querySelector('[name="q6_feel"]:checked')?.value || '';
+    data.q7_suggestion = document.querySelector('[name="q7_suggestion"]').value.trim();
+    const btn = document.querySelector('.submit-btn');
+    const originalLabel = btn.textContent;
+    btn.textContent = '...'; btn.disabled = true;
+
+    let success = false;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        success = true;
+        break;
+      } catch(err) {
+        if (attempt < 3) {
+          await new Promise(r => setTimeout(r, 1000 * attempt));
+        }
+      }
+    }
+
+    if (success) {
+      document.getElementById('form-wrap').style.display = 'none';
+      document.getElementById('success-screen').classList.add('visible');
+      window.scrollTo({ top:0, behavior:'smooth' });
+    } else {
+      showToast('Something went wrong. Please try again.');
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
