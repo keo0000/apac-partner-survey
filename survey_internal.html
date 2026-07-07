@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APAC Content Team — Internal Survey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --border: #E2E0DA;
+    --border-strong: #C8C4BC;
+    --text: #1A1A1A;
+    --text-secondary: #5A5750;
+    --text-muted: #9B9790;
+    --red: #E50914;
+    --red-soft: #FDF0F0;
+    --accent: #1A1A1A;
+    --radius: 6px;
+    --selected-bg: #F0F0EE;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--red);
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-bar { width: 4px; height: 28px; background: var(--red); border-radius: 2px; }
+  .header-title { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--text); }
+  .header-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .page-indicator { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+  /* Main layout */
+  .container { max-width: 640px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Page sections */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header { margin-bottom: 36px; }
+  .page-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .page-title { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .page-desc { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+
+  /* Question blocks */
+  .q-block { margin-bottom: 32px; }
+  .q-label { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; line-height: 1.45; }
+  .q-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; font-style: italic; }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .option-label:hover { border-color: var(--border-strong); background: var(--selected-bg); }
+  .option-label input { display: none; }
+
+  .indicator {
+    width: 17px; height: 17px;
+    border: 1.5px solid var(--border-strong);
+    flex-shrink: 0; margin-top: 1px;
+    transition: all 0.15s; position: relative;
+  }
+
+  .option-label input[type="radio"] ~ .indicator { border-radius: 50%; }
+  .option-label input[type="checkbox"] ~ .indicator { border-radius: 3px; }
+
+  .option-label input:checked ~ .indicator { background: var(--red); border-color: var(--red); }
+  .option-label input[type="radio"]:checked ~ .indicator::after {
+    content: ''; position: absolute; inset: 4px;
+    background: white; border-radius: 50%;
+  }
+  .option-label input[type="checkbox"]:checked ~ .indicator::after {
+    content: '✓'; color: white; font-size: 10px;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .option-label:has(input:checked) { border-color: var(--red); background: var(--red-soft); }
+  .option-text { font-size: 14px; color: var(--text); line-height: 1.45; padding-top: 0px; }
+
+  /* Rating grid */
+  .rating-grid { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+
+  .rating-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rating-row:last-child { border-bottom: none; }
+  .rating-label { font-size: 13px; color: var(--text); }
+  .rating-scale { display: flex; gap: 5px; flex-shrink: 0; }
+
+  .rating-btn {
+    width: 34px; height: 34px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 500;
+    transition: all 0.12s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .rating-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .rating-btn.selected { background: var(--red); border-color: var(--red); color: white; }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: var(--border-strong); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  /* Navigation */
+  .nav { display: flex; gap: 12px; align-items: center; margin-top: 40px; }
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { background: #c0070f; }
+  .btn-secondary {
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--border-strong); color: var(--text); }
+
+  /* Success */
+  .success { display: none; text-align: center; padding: 60px 24px; }
+  .success.active { display: block; }
+  .success-icon { font-size: 40px; margin-bottom: 16px; }
+  .success h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .success p { font-size: 14px; color: var(--text-secondary); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: #1A1A1A; color: white;
+    padding: 10px 18px; border-radius: var(--radius);
+    font-size: 13px; transition: transform 0.3s ease;
+    z-index: 200; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 500px) {
+    header { padding: 14px 16px; }
+    .container { padding: 24px 16px 60px; }
+    .rating-row { grid-template-columns: 1fr; gap: 8px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .rating-scale { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<header>
+  <div class="header-left">
+    <div class="logo-bar"></div>
+    <div>
+      <div class="header-title">APAC Content Team</div>
+      <div class="header-subtitle">Internal Survey — Confidential</div>
+    </div>
+  </div>
+  <div class="page-indicator" id="page-indicator">Page 1 of 2</div>
+</header>
+
+<div class="container">
+
+  <!-- PAGE 1 -->
+  <div class="page active" id="page-1">
+    <div class="page-header">
+      <div class="page-label">Part 1 of 2</div>
+      <div class="page-title">About you & the team</div>
+      <div class="page-desc">Your responses are anonymous and for internal use only.</div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="q-block">
+      <div class="q-label">1. What is your role in the team?</div>
+      <div class="q-hint">Select one.</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q1" value="Country Lead"><span class="indicator"></span><span class="option-text">Country Lead</span></label>
+        <label class="option-label"><input type="radio" name="q1" value="Team Lead (Director)"><span class="indicator"></span><span class="option-text">Team Lead (Director)</span></label>
+        <label class="option-label"><input type="radio" name="q1" value="IC (Manager)"><span class="indicator"></span><span class="option-text">IC (Manager)</span></label>
+        <label class="option-label"><input type="radio" name="q1" value="Coordinator / Creative Assistant"><span class="indicator"></span><span class="option-text">Coordinator / Creative Assistant</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q2 -->
+    <div class="q-block">
+      <div class="q-label">2. Choose the top 3 (and only 3) skillsets that you think are important for a Creative Partner to have.</div>
+      <div class="q-hint">Select exactly 3.</div>
+      <div class="options" id="q2-options">
+        <label class="option-label"><input type="checkbox" name="q2" value="Strong Creative Intuition and Taste in content"><span class="indicator"></span><span class="option-text">Strong Creative Intuition and Taste in content</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Expertise in Story Structure and Architecture"><span class="indicator"></span><span class="option-text">Expertise in Story Structure and Architecture</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Ability to brainstorm new ideas"><span class="indicator"></span><span class="option-text">Ability to brainstorm new ideas</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Ability to give good script notes and cut notes"><span class="indicator"></span><span class="option-text">Ability to give good script notes and cut notes</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Ability to be helpful beyond story issues, such as Production, Casting, or others"><span class="indicator"></span><span class="option-text">Ability to be helpful beyond story issues, such as Production, Casting, or others</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Confident Decision Making"><span class="indicator"></span><span class="option-text">Confident Decision Making</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Ability to have difficult conversations"><span class="indicator"></span><span class="option-text">Ability to have difficult conversations</span></label>
+        <label class="option-label"><input type="checkbox" name="q2" value="Strong hospitality and motivational support"><span class="indicator"></span><span class="option-text">Strong hospitality and motivational support</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q3 -->
+    <div class="q-block">
+      <div class="q-label">3. On a scale of 1 to 5, how do you feel we are doing as a Content Team in these areas?</div>
+      <div class="q-hint">5 is the highest.</div>
+      <div class="rating-grid">
+        <div class="rating-row"><span class="rating-label">Strong Creative Intuition and Taste</span><div class="rating-scale" data-name="q3_0"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Expertise in Story Structure and Architecture</span><div class="rating-scale" data-name="q3_1"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Ability to brainstorm new ideas</span><div class="rating-scale" data-name="q3_2"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Ability to give good script notes and cut notes</span><div class="rating-scale" data-name="q3_3"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Ability to be helpful beyond story issues</span><div class="rating-scale" data-name="q3_4"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Confident Decision Making</span><div class="rating-scale" data-name="q3_5"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Ability to have difficult conversations</span><div class="rating-scale" data-name="q3_6"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+        <div class="rating-row"><span class="rating-label">Strong hospitality and motivational support</span><div class="rating-scale" data-name="q3_7"><button type="button" class="rating-btn" data-val="1">1</button><button type="button" class="rating-btn" data-val="2">2</button><button type="button" class="rating-btn" data-val="3">3</button><button type="button" class="rating-btn" data-val="4">4</button><button type="button" class="rating-btn" data-val="5">5</button></div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q4 -->
+    <div class="q-block">
+      <div class="q-label">4. Complete the following statement: I feel like we as a Content Team are —</div>
+      <div class="options">
+        <label class="option-label"><input type="radio" name="q4" value="1"><span class="indicator"></span><span class="option-text">Very Corporate</span></label>
+        <label class="option-label"><input type="radio" name="q4" value="2"><span class="indicator"></span><span class="option-text">Corporate</span></label>
+        <label class="option-label"><input type="radio" name="q4" value="3"><span class="indicator"></span><span class="option-text">Corporate and Creative</span></label>
+        <label class="option-label"><input type="radio" name="q4" value="4"><span class="indicator"></span><span class="option-text">Creative</span></label>
+        <label class="option-label"><input type="radio" name="q4" value="5"><span class="indicator"></span><span class="option-text">Very Creative</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q5 -->
+    <div class="q-block">
+      <div class="q-label">5. What is one "myth" about Netflix content that you hear our partners say?</div>
+      <textarea name="q5" placeholder="Share what you hear…"></textarea>
+    </div>
+
+    <div class="nav">
+      <button class="btn-primary" onclick="nextPage()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page-2">
+    <div class="page-header">
+      <div class="page-label">Part 2 of 2</div>
+      <div class="page-title">Risk & creative instinct</div>
+      <div class="page-desc">No right or wrong answers — we're interested in your genuine instincts.</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-block">
+      <div class="q-label">6. From the list below, pick the 5 titles you consider most "risky." Do not factor in whether the title performed well.</div>
+      <div class="q-hint">Select exactly 5.</div>
+      <div class="options grid-2" id="q6-options">
+        <label class="option-label"><input type="checkbox" name="q6" value="Wednesday"><span class="indicator"></span><span class="option-text">Wednesday</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Stranger Things"><span class="indicator"></span><span class="option-text">Stranger Things</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Game of Thrones"><span class="indicator"></span><span class="option-text">Game of Thrones</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Avengers: Infinity War"><span class="indicator"></span><span class="option-text">Avengers: Infinity War (not including Endgame)</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="One Piece"><span class="indicator"></span><span class="option-text">One Piece</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Beef"><span class="indicator"></span><span class="option-text">Beef</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Baby Reindeer"><span class="indicator"></span><span class="option-text">Baby Reindeer</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Adolescence"><span class="indicator"></span><span class="option-text">Adolescence</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Backrooms"><span class="indicator"></span><span class="option-text">Backrooms</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="The Glory"><span class="indicator"></span><span class="option-text">The Glory</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Breaking Bad"><span class="indicator"></span><span class="option-text">Breaking Bad</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Succession"><span class="indicator"></span><span class="option-text">Succession</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="The Last of Us"><span class="indicator"></span><span class="option-text">The Last of Us</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Barbie"><span class="indicator"></span><span class="option-text">Barbie</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Oppenheimer"><span class="indicator"></span><span class="option-text">Oppenheimer</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Everything Everywhere All at Once"><span class="indicator"></span><span class="option-text">Everything Everywhere All at Once</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Joker"><span class="indicator"></span><span class="option-text">Joker</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Get Out"><span class="indicator"></span><span class="option-text">Get Out</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Bridgerton"><span class="indicator"></span><span class="option-text">Bridgerton</span></label>
+        <label class="option-label"><input type="checkbox" name="q6" value="Emily in Paris"><span class="indicator"></span><span class="option-text">Emily in Paris</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q7 -->
+    <div class="q-block">
+      <div class="q-label">7. What is the "riskiest" genre? Choose 3.</div>
+      <div class="q-hint">Select exactly 3.</div>
+      <div class="options grid-2" id="q7-options">
+        <label class="option-label"><input type="checkbox" name="q7" value="Romance"><span class="indicator"></span><span class="option-text">Romance</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="YA"><span class="indicator"></span><span class="option-text">YA</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Horror"><span class="indicator"></span><span class="option-text">Horror</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Comedy (scripted)"><span class="indicator"></span><span class="option-text">Comedy (scripted)</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Crime / Thriller"><span class="indicator"></span><span class="option-text">Crime / Thriller</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Sci-fi / Fantasy"><span class="indicator"></span><span class="option-text">Sci-fi / Fantasy</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Period"><span class="indicator"></span><span class="option-text">Period</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Action"><span class="indicator"></span><span class="option-text">Action</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Soap / Drama"><span class="indicator"></span><span class="option-text">Soap / Drama</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Comedy (non-scripted)"><span class="indicator"></span><span class="option-text">Comedy (non-scripted)</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Talk Show / Variety"><span class="indicator"></span><span class="option-text">Talk Show / Variety</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Competition Reality"><span class="indicator"></span><span class="option-text">Competition Reality</span></label>
+        <label class="option-label"><input type="checkbox" name="q7" value="Documentary"><span class="indicator"></span><span class="option-text">Documentary</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q8 -->
+    <div class="q-block">
+      <div class="q-label">8. What is the riskiest show from your market in the last 3 years?</div>
+      <textarea name="q8" placeholder="Title and briefly why…"></textarea>
+    </div>
+
+    <div class="nav">
+      <button class="btn-secondary" onclick="prevPage()">← Back</button>
+      <button class="btn-primary" onclick="submitForm()">Submit →</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="success-icon">✓</div>
+    <h2>Thank you.</h2>
+    <p>Your response has been recorded. We appreciate you taking the time.</p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBa2JYyi2dbnNdDkYx1c1SVQB-g32Ke9pJaNbgpZJch7FmkRRU5jmHrMGCVnBZd2vA/exec';
+let currentPage = 1;
+
+// Rating buttons
+document.querySelectorAll('.rating-scale').forEach(scale => {
+  scale.querySelectorAll('.rating-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      scale.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+});
+
+// Limit Q2 to 3
+const q2 = document.getElementById('q2-options');
+q2.addEventListener('change', () => {
+  const checked = q2.querySelectorAll('input:checked');
+  q2.querySelectorAll('input:not(:checked)').forEach(cb => cb.disabled = checked.length >= 3);
+  if (checked.length < 3) q2.querySelectorAll('input').forEach(cb => cb.disabled = false);
+});
+
+// Limit Q6 to 5
+const q6 = document.getElementById('q6-options');
+q6.addEventListener('change', () => {
+  const checked = q6.querySelectorAll('input:checked');
+  q6.querySelectorAll('input:not(:checked)').forEach(cb => cb.disabled = checked.length >= 5);
+  if (checked.length < 5) q6.querySelectorAll('input').forEach(cb => cb.disabled = false);
+});
+
+// Limit Q7 to 3
+const q7 = document.getElementById('q7-options');
+q7.addEventListener('change', () => {
+  const checked = q7.querySelectorAll('input:checked');
+  q7.querySelectorAll('input:not(:checked)').forEach(cb => cb.disabled = checked.length >= 3);
+  if (checked.length < 3) q7.querySelectorAll('input').forEach(cb => cb.disabled = false);
+});
+
+function updateProgress() {
+  const pct = currentPage === 1 ? 50 : 100;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('page-indicator').textContent = `Page ${currentPage} of 2`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function nextPage() {
+  // Validate page 1
+  if (!document.querySelector('[name="q1"]:checked')) { showToast('Please select your role.'); return; }
+  const q2checked = q2.querySelectorAll('input:checked');
+  if (q2checked.length !== 3) { showToast('Please select exactly 3 skillsets.'); return; }
+
+  document.getElementById('page-1').classList.remove('active');
+  document.getElementById('page-2').classList.add('active');
+  currentPage = 2;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevPage() {
+  document.getElementById('page-2').classList.remove('active');
+  document.getElementById('page-1').classList.add('active');
+  currentPage = 1;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function submitForm() {
+  const q6checked = q6.querySelectorAll('input:checked');
+  if (q6checked.length !== 5) { showToast('Please select exactly 5 titles.'); return; }
+  const q7checked = q7.querySelectorAll('input:checked');
+  if (q7checked.length !== 3) { showToast('Please select exactly 3 genres.'); return; }
+
+  const data = { timestamp: new Date().toISOString() };
+  data.q1_role = document.querySelector('[name="q1"]:checked')?.value || '';
+  data.q2_skillsets = [...q2.querySelectorAll('input:checked')].map(c => c.value).join(', ');
+
+  document.querySelectorAll('.rating-scale').forEach(scale => {
+    data[scale.dataset.name] = scale.querySelector('.rating-btn.selected')?.dataset.val || '';
+  });
+
+  data.q4_corporate = document.querySelector('[name="q4"]:checked')?.value || '';
+  data.q5_myth = document.querySelector('[name="q5"]').value.trim();
+  data.q6_risky_titles = [...q6.querySelectorAll('input:checked')].map(c => c.value).join(', ');
+  data.q7_risky_genres = [...q7.querySelectorAll('input:checked')].map(c => c.value).join(', ');
+  data.q8_riskiest_show = document.querySelector('[name="q8"]').value.trim();
+
+  const btn = document.querySelector('.btn-primary');
+  const origLabel = btn.textContent;
+  btn.textContent = '...'; btn.disabled = true;
+
+  let success = false;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      success = true; break;
+    } catch (err) {
+      if (attempt < 3) await new Promise(r => setTimeout(r, 1000 * attempt));
+    }
+  }
+
+  if (success) {
+    document.getElementById('page-2').classList.remove('active');
+    document.getElementById('success').classList.add('active');
+    document.getElementById('progress').style.width = '100%';
+    document.getElementById('page-indicator').textContent = 'Complete';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showToast('Something went wrong. Please try again.');
+    btn.textContent = origLabel; btn.disabled = false;
+  }
+}
+
+updateProgress();
+</script>
+</body>
+</html>
